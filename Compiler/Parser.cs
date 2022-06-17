@@ -135,7 +135,7 @@ namespace Compiler
                 Match(TokenType.IDENT);
             }
             // "GOTO" ident
-            else if (!CheckToken(TokenType.GOTO))
+            else if (CheckToken(TokenType.GOTO))
             {
                 Console.WriteLine("STATEMENT-GOTO");
                 NextToken();

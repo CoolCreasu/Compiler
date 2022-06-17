@@ -2,21 +2,19 @@
 {
     internal class Program
     {
-        private static string _code = "PRINT \"hello\"\n";
-        private static Lexer _lexer = new Lexer(_code);
-        private static Parser _parser = new Parser(_lexer);
+        //private static string _code = "PRINT \"hello\"\n";
+        private static Lexer _lexer;
+        private static Parser _parser;
 
 
         static void Main(string[] args)
         {
-            /*
-            Token? token = _lexer.GetToken();
-            while (token.TokenKind != TokenType.EOF)
-            {
-                Console.WriteLine(token.TokenKind);
-                token = _lexer.GetToken();
-            }
-            */
+            //var path = Console.ReadLine();
+            var path = "C:/Unity Project/basic.txt";
+            var _code = System.IO.File.ReadAllText(path);
+
+            _lexer = new Lexer(_code);
+            _parser = new Parser(_lexer);
             _parser.Program();
             Console.WriteLine("Parsing complete");
         }
