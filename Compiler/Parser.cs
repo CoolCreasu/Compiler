@@ -90,7 +90,7 @@ namespace Compiler
                 else
                 {
                     // Expression
-                    Console.WriteLine("Expression");
+                    Expression();
                 }
             }
             // "IF" comparison "THEN" {statement} "ENDIF"
@@ -98,7 +98,7 @@ namespace Compiler
             {
                 Console.WriteLine("STATEMENT-IF");
                 NextToken();
-                //Comparison();
+                Comparison();
 
                 Match(TokenType.THEN);
                 NL();
@@ -116,7 +116,7 @@ namespace Compiler
             {
                 Console.WriteLine("STATEMENT-WHILE");
                 NextToken();
-                //Comparison();
+                Comparison();
 
                 Match(TokenType.REPEAT);
                 NL();
@@ -148,7 +148,7 @@ namespace Compiler
                 NextToken();
                 Match(TokenType.IDENT);
                 Match(TokenType.EQ);
-                //Expression();
+                Expression();
             }
             // "INPUT" ident
             else if (CheckToken(TokenType.INPUT))
@@ -175,6 +175,69 @@ namespace Compiler
             // But we will allow extra newlines too, of course.
             while (CheckToken(TokenType.NEWLINE))
                 NextToken();
+        }
+
+        public void Comparison()
+        {
+            Console.WriteLine("COMPARISON");
+
+            Expression();
+            // Must be at least one comparison operator and another expression.
+            if (IsComparisonOperator())
+            {
+                NextToken();
+                Expression();
+            }
+            else
+            {
+                Abort("Expected comparison operator at: " + _currentToken.TokenText);
+            }
+            // Can have 0 or more comparison operator and expressions
+            while (IsComparisonOperator())
+            {
+                NextToken();
+                Expression();
+            }
+
+        }
+
+        /// <summary>
+        /// Returns true if the current operator is a comparison operator.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsComparisonOperator()
+        {
+            return CheckToken(TokenType.GT) || CheckToken(TokenType.GTEQ) || CheckToken(TokenType.LT) || CheckToken(TokenType.LTEQ) || CheckToken(TokenType.EQEQ) || CheckToken(TokenType.NOTEQ);
+        }
+
+        public void Expression()
+        {
+            Console.WriteLine("Expression");
+            Term();
+            // Can have 0 or more +/- and expressions.
+            while (CheckToken(TokenType.PLUS) || CheckToken(TokenType.MINUS))
+            {
+                NextToken();
+                Term();
+            }
+        }
+
+        public void Term()
+        {
+            Console.WriteLine("TERM");
+
+            Unary();
+            // Can have 0 or more *// and expressions.
+            while (CheckToken(TokenType.ASTERISK) || CheckToken(TokenType.SLASH))
+            {
+                NextToken();
+                Unary();
+            }
+        }
+
+        public void Unary()
+        {
+            Console.WriteLine("UNARY");
         }
     }
 }
