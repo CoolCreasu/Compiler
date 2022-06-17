@@ -210,9 +210,13 @@ namespace Compiler
             return CheckToken(TokenType.GT) || CheckToken(TokenType.GTEQ) || CheckToken(TokenType.LT) || CheckToken(TokenType.LTEQ) || CheckToken(TokenType.EQEQ) || CheckToken(TokenType.NOTEQ);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Expression()
         {
             Console.WriteLine("Expression");
+
             Term();
             // Can have 0 or more +/- and expressions.
             while (CheckToken(TokenType.PLUS) || CheckToken(TokenType.MINUS))
@@ -222,6 +226,9 @@ namespace Compiler
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Term()
         {
             Console.WriteLine("TERM");
@@ -238,6 +245,18 @@ namespace Compiler
         public void Unary()
         {
             Console.WriteLine("UNARY");
+
+            // Optional unary +/-
+            if (CheckToken(TokenType.PLUS) || CheckToken(TokenType.MINUS))
+            {
+                NextToken();
+            }
+            Primary();
+        }
+
+        public void Primary()
+        {
+
         }
     }
 }
