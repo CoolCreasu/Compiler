@@ -18,14 +18,9 @@ namespace Compiler
 
         public static TokenType? CheckIfKeyword(string tokenText)
         {
-            // TODO: Check if token is keyword
-            foreach (TokenType kind in Enum.GetValues(typeof(TokenType)))
-            {
-                Console.WriteLine(kind + " <--> " + kind.ToString());
-                return TokenType.IDENT;
-            }
-
-            // Return null if it is not a keyword
+            // If the string matches a Name in the TokenType enum and if the value >= 100 && value <= 200
+            return TokenType.IDENT;
+            // Else
             return null;
         }
     }

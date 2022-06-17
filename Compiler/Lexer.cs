@@ -181,7 +181,7 @@ namespace Compiler
                     }
                     NextChar();
                 }
-                var tokText = _source.Substring(startPos, _currentPos - startPos); // Get the substring.
+                var tokText = _source.Substring(startPos, _currentPos - startPos + 1); // Get the substring.
                 token = new Token(tokText, TokenType.STRING);
             }
             else if (char.IsDigit(CurrentChar))
@@ -208,7 +208,7 @@ namespace Compiler
                         NextChar();
                     }
                 }
-                var tokText = _source.Substring(startPos, _currentPos - startPos);  // Get the substring.
+                var tokText = _source.Substring(startPos, _currentPos - startPos + 1);  // Get the substring.
                 token = new Token(tokText, TokenType.NUMBER);
             }
             else if (char.IsLetter(CurrentChar))
@@ -220,7 +220,7 @@ namespace Compiler
                 {
                     NextChar();
                 }
-                var tokText = _source.Substring(startPos, _currentPos - startPos);  // Get the substring.
+                var tokText = _source.Substring(startPos, _currentPos - startPos + 1);  // Get the substring.
                 TokenType keyword = (TokenType)Token.CheckIfKeyword(tokText);
                 if (keyword == TokenType.IDENT)    // Identifier
                 {
