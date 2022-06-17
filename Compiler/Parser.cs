@@ -64,9 +64,38 @@ namespace Compiler
             }
         }
 
+        // One of the following statements
         public void Statement()
         {
+            // Check the first token to see what kind of statement it is.
 
+            // "PRINT" (expression | string)
+            if (CheckToken(TokenType.PRINT))
+            {
+                Console.WriteLine("STATEMENT-PRINT");
+                NextToken();
+
+                if (CheckToken(TokenType.STRING))
+                {
+                    // Simple string.
+                    NextToken();
+                }
+                else
+                {
+                    // Expression
+                }
+            }
+        }
+
+        public void NL()
+        {
+            Console.WriteLine("NEWLINE");
+
+            // Require at least one newline.
+            Match(TokenType.NEWLINE);
+            // But we will allow extra newlines too, of course.
+            while (CheckToken(TokenType.NEWLINE))
+                NextToken();
         }
     }
 }
