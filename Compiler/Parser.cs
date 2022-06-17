@@ -58,6 +58,15 @@ namespace Compiler
         {
             Console.WriteLine("Program");
 
+            while (!CheckToken(TokenType.EOF))
+            {
+                Statement();
+            }
+        }
+
+        public void Statement()
+        {
+
         }
     }
 }
