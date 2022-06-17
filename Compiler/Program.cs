@@ -2,7 +2,7 @@
 {
     internal class Program
     {
-        private static string _code = "+-123 9.8654*/*/UP LET BE IS GOTO LABEL";
+        private static string _code = "PRINT \"hello\"\n";
         private static Lexer _lexer = new Lexer(_code);
         private static Parser _parser = new Parser(_lexer);
 

@@ -56,7 +56,7 @@ namespace Compiler
 
         public void Program()
         {
-            Console.WriteLine("Program");
+            Console.WriteLine("PROGRAM");
 
             while (!CheckToken(TokenType.EOF))
             {
@@ -83,8 +83,11 @@ namespace Compiler
                 else
                 {
                     // Expression
+                    Console.WriteLine("Expression");
                 }
             }
+
+            NL();
         }
 
         public void NL()
