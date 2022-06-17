@@ -54,6 +54,9 @@ namespace Compiler
             throw new Exception(message);
         }
 
+        /// <summary>
+        /// program ::= {statement}
+        /// </summary>
         public void Program()
         {
             Console.WriteLine("PROGRAM");
@@ -177,6 +180,9 @@ namespace Compiler
                 NextToken();
         }
 
+        /// <summary>
+        /// comparison ::= expression (("==" | "!=" | ">" | ">=" | "<" | "<=") expression)+
+        /// </summary>
         public void Comparison()
         {
             Console.WriteLine("COMPARISON");
@@ -211,7 +217,7 @@ namespace Compiler
         }
 
         /// <summary>
-        /// 
+        /// expression ::= term {( "-" | "+" ) term}
         /// </summary>
         public void Expression()
         {
@@ -227,7 +233,7 @@ namespace Compiler
         }
 
         /// <summary>
-        /// 
+        /// expression ::= unary {( "/" | "*") unary}
         /// </summary>
         public void Term()
         {
@@ -241,7 +247,9 @@ namespace Compiler
                 Unary();
             }
         }
-
+        /// <summary>
+        /// unary ::= ["+" | "-"] primary
+        /// </summary>
         public void Unary()
         {
             Console.WriteLine("UNARY");
@@ -254,9 +262,20 @@ namespace Compiler
             Primary();
         }
 
+        /// <summary>
+        /// primary ::= number | ident
+        /// </summary>
         public void Primary()
         {
+            Console.WriteLine("PRIMARY (" + _currentToken.TokenText + ")");
 
+            if (CheckToken(TokenType.NUMBER))
+                NextToken();
+            else if (CheckToken(TokenType.IDENT))
+                NextToken();
+            else
+                // Error
+                Abort("Unexpected token at " + _currentToken.TokenText);
         }
     }
 }
