@@ -58,6 +58,13 @@ namespace Compiler
         {
             Console.WriteLine("PROGRAM");
 
+            // Since some newlines are required in our grammar, need to skip the excess.
+            while (CheckToken(TokenType.NEWLINE))
+            {
+                NextToken();
+            }
+
+            // Parse all the statements in the program.
             while (!CheckToken(TokenType.EOF))
             {
                 Statement();
@@ -143,6 +150,19 @@ namespace Compiler
                 Match(TokenType.EQ);
                 //Expression();
             }
+            // "INPUT" ident
+            else if (CheckToken(TokenType.INPUT))
+            {
+                Console.WriteLine("STATEMENT-INPUT");
+                NextToken();
+                Match(TokenType.IDENT);
+            }
+            // This is not a valid statement. Error!
+            else
+            {
+                Abort("Invalid statement at " + _currentToken.TokenText + " (" + _currentToken.TokenKind.ToString() + ")");
+            }
+            // Newline.
             NL();
         }
 
