@@ -17,7 +17,7 @@
                 token = _lexer.GetToken();
             }
             */
-            //_parser.Program();
+            _parser.Program();
             Console.WriteLine("Parsing complete");
         }
     }

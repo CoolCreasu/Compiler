@@ -10,24 +10,28 @@ namespace Compiler
     internal class Parser
     {
         Lexer _lexer;
-        Token _currentToken;
-        Token _peekToken;
+        Token? _currentToken;
+        Token? _peekToken;
 
         public Parser(Lexer lexer)
         {
             _lexer = lexer;
+            _currentToken = null;
+            _peekToken = null;
+            NextToken();
+            NextToken();    // Call this twice to initialize current and peek.
         }
 
         // Return true if the current token matches.
         public bool CheckToken(TokenType tokenKind)
         {
-            return (tokenKind == _currentToken.TokenKind);
+            return tokenKind == _currentToken.TokenKind;
         }
 
         // Return true if the next token matches.
         public bool CheckPeek(TokenType tokenKind)
         {
-            return (tokenKind == _peekToken.TokenKind);
+            return tokenKind == _peekToken.TokenKind;
         }
 
         // Try to match current Token. If not, error. Advances the current token.
@@ -48,6 +52,12 @@ namespace Compiler
         public void Abort(string message)
         {
             throw new Exception(message);
+        }
+
+        public void Program()
+        {
+            Console.WriteLine("Program");
+
         }
     }
 }
