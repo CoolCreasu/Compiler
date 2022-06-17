@@ -221,14 +221,14 @@ namespace Compiler
                     NextChar();
                 }
                 var tokText = _source.Substring(startPos, _currentPos - startPos + 1);  // Get the substring.
-                TokenType keyword = (TokenType)Token.CheckIfKeyword(tokText);
-                if (keyword == TokenType.IDENT)    // Identifier
+                TokenType? keyword = (TokenType?)Token.CheckIfKeyword(tokText);
+                if (keyword == null)    // Identifier
                 {
                     token = new Token(tokText, TokenType.IDENT);
                 }
                 else    // Keyword
                 {
-                    token = new Token(tokText, keyword);
+                    token = new Token(tokText, (TokenType)keyword);
                 }
             }
             else
