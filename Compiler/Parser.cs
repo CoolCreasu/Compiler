@@ -86,7 +86,63 @@ namespace Compiler
                     Console.WriteLine("Expression");
                 }
             }
+            // "IF" comparison "THEN" {statement} "ENDIF"
+            else if (CheckToken(TokenType.IF))
+            {
+                Console.WriteLine("STATEMENT-IF");
+                NextToken();
+                //Comparison();
 
+                Match(TokenType.THEN);
+                NL();
+
+                // Zero or more statements in the body
+                while (!CheckToken(TokenType.ENDIF))
+                {
+                    Statement();
+                }
+
+                Match(TokenType.ENDIF);
+            }
+            // "WHILE" comparison "REPEAT" nl {statement nl} "ENDWHILE" nl
+            else if (CheckToken(TokenType.WHILE))
+            {
+                Console.WriteLine("STATEMENT-WHILE");
+                NextToken();
+                //Comparison();
+
+                Match(TokenType.REPEAT);
+                NL();
+
+                // Zero or more statements in the loop body.
+                while (!CheckToken(TokenType.ENDWHILE))
+                    Statement();
+
+                Match(TokenType.ENDWHILE);
+            }
+            // "LABEL" ident
+            else if (CheckToken(TokenType.LABEL))
+            {
+                Console.WriteLine("STATEMENT-LABEL");
+                NextToken();
+                Match(TokenType.IDENT);
+            }
+            // "GOTO" ident
+            else if (!CheckToken(TokenType.GOTO))
+            {
+                Console.WriteLine("STATEMENT-GOTO");
+                NextToken();
+                Match(TokenType.IDENT);
+            }
+            // "LET" ident "=" expression
+            else if (CheckToken(TokenType.LET))
+            {
+                Console.WriteLine("STATEMENT-LET");
+                NextToken();
+                Match(TokenType.IDENT);
+                Match(TokenType.EQ);
+                //Expression();
+            }
             NL();
         }
 
