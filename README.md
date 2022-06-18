@@ -7,4 +7,5 @@ His Github repository: https://github.com/AZHenley/teenytinycompiler
 This is now a complete version made i C#
 If you want you can always do a pull request to contribute code or adjust the code for readability.
 
-I am not planning on adding stuff to this, i mostly did this to see how hard/easy it is to convert code from a different language.
+I am not planning on adding stuff to this, i mostly did this to see how hard/easy it is to convert code from a different language.  
+If you want you can always make a pull request to add code yourself tho, if it works i will merge it.
