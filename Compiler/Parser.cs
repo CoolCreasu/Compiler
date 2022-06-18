@@ -58,7 +58,8 @@ namespace Compiler
 
         public void Abort(string message)
         {
-            throw new Exception(message);
+            Console.WriteLine(message);
+            Environment.Exit(1);
         }
 
         /// <summary>
