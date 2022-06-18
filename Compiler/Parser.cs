@@ -13,9 +13,9 @@ namespace Compiler
         Token _currentToken;
         Token _peekToken;
 
-        string[] symbols;   // Variables declared so far.
-        string[] labelsDeclared; // Labels declared so far.
-        string[] labelsGotoed;  // Labels goto'ed so far.
+        string[] symbols = { string.Empty };   // Variables declared so far.
+        string[] labelsDeclared = { string.Empty }; // Labels declared so far.
+        string[] labelsGotoed = { string.Empty };  // Labels goto'ed so far.
 
         public Parser(Lexer lexer)
         {
@@ -78,7 +78,6 @@ namespace Compiler
                 Statement();
             }
 
-            /* Error here
             foreach (string label in labelsGotoed)
             {
                 if (!labelsDeclared.Contains(label))
@@ -86,7 +85,6 @@ namespace Compiler
                     Abort("Attempting to GOTO to undeclared variable: " + label);
                 }
             }
-            */
         }
 
         // One of the following statements
@@ -154,10 +152,10 @@ namespace Compiler
                 // Make sure the label doesn't already exist
                 if (labelsDeclared.Contains(_currentToken.TokenText))
                 {
-                    Abort("Label already exists: " + _currentToken?.TokenText);
+                    Abort("Label already exists: " + _currentToken.TokenText);
                 }
                 Array.Resize(ref labelsDeclared, labelsDeclared.Length + 1);
-                labelsDeclared.Append(_currentToken?.TokenText);
+                labelsDeclared.Append(_currentToken.TokenText);
                 Match(TokenType.IDENT);
             }
             // "GOTO" ident
@@ -175,14 +173,12 @@ namespace Compiler
                 Console.WriteLine("STATEMENT-LET");
                 NextToken();
 
-                // Check if the indent exists in the symbol table. If not, declare it.
-                /* Error here
+                // Check if ident exists in symbol table. If not, declare it.
                 if (!symbols.Contains(_currentToken.TokenText))
                 {
                     Array.Resize(ref symbols, symbols.Length + 1);
                     symbols.Append(_currentToken.TokenText);
                 }
-                */
 
                 Match(TokenType.IDENT);
                 Match(TokenType.EQ);
@@ -195,13 +191,11 @@ namespace Compiler
                 NextToken();
 
                 // If variable doesn't already exist, declare it.
-                /* Error here
                 if (!symbols.Contains(_currentToken.TokenText))
                 {
                     Array.Resize(ref symbols, symbols.Length + 1);
                     symbols.Append(_currentToken.TokenText);
                 }
-                */
 
                 Match(TokenType.IDENT);
             }
@@ -320,13 +314,11 @@ namespace Compiler
             }
             else if (CheckToken(TokenType.IDENT))
             {
-                // Ensure the variable already exists
-                /* Error here
+                // Ensure the variable already exists.
                 if (!symbols.Contains(_currentToken.TokenText))
                 {
                     Abort("Referencing variable before assignment: " + _currentToken.TokenText);
                 }
-                */
                 NextToken();
             }
             else
