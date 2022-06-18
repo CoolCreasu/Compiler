@@ -108,7 +108,7 @@ namespace Compiler
                 if (CheckToken(TokenType.STRING))
                 {
                     // Simple string so print it.
-                    _emitter.EmitLine("printf(\"" + _currentToken.TokenText + "\\n\");");
+                    _emitter.EmitLine("printf(\"" + _currentToken.TokenText + "\\" + "n" +"\");");
                     NextToken();
                 }
                 else
