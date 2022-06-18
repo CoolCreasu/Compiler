@@ -10,18 +10,28 @@
 
         static void Main(string[] args)
         {
-            //var path = Console.ReadLine();
-            var path = "C:/Unity Project/basic.txt";
-            var _code = File.ReadAllText(path);
+            Console.WriteLine("Please put in the path to your code. (e.g. C:/code/hello.teeny)");
+            var path = Console.ReadLine();
+            Console.WriteLine("Please put in the path to your output. (e.g. C:/code/output.c)");
+            var outputPath = Console.ReadLine();
 
-            // Initialize the lexer, emitter and parser.
-            Lexer _lexer = new Lexer(_code);
-            Emitter _emitter = new Emitter("C:/Unity Project/output.c");
-            Parser _parser = new Parser(_lexer, _emitter);
+            if (path == null || outputPath == null)
+            {
+                Console.WriteLine("No valid path given.");
+            }
+            else
+            {
+                var _code = File.ReadAllText(path);
 
-            _parser.Program();  // Start the parser
-            _emitter.WriteFile(); // Write the output to a file.
-            Console.WriteLine("Compiling complete");
+                // Initialize the lexer, emitter and parser.
+                Lexer _lexer = new Lexer(_code);
+                Emitter _emitter = new Emitter(outputPath);
+                Parser _parser = new Parser(_lexer, _emitter);
+
+                _parser.Program();  // Start the parser
+                _emitter.WriteFile(); // Write the output to a file.
+                Console.WriteLine("Compiling complete");
+            }
         }
     }
 }
