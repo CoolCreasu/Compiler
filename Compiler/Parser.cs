@@ -155,7 +155,8 @@ namespace Compiler
                     Abort("Label already exists: " + _currentToken.TokenText);
                 }
                 Array.Resize(ref labelsDeclared, labelsDeclared.Length + 1);
-                labelsDeclared.Append(_currentToken.TokenText);
+                //labelsDeclared.Append(_currentToken.TokenText);
+                labelsDeclared[labelsDeclared.Length - 1] = _currentToken.TokenText;
                 Match(TokenType.IDENT);
             }
             // "GOTO" ident
@@ -164,7 +165,8 @@ namespace Compiler
                 Console.WriteLine("STATEMENT-GOTO");
                 NextToken();
                 Array.Resize(ref labelsGotoed, labelsGotoed.Length + 1);
-                labelsGotoed.Append(_currentToken.TokenText);
+                //labelsGotoed.Append(_currentToken.TokenText);
+                labelsGotoed[labelsGotoed.Length - 1] = _currentToken.TokenText;
                 Match(TokenType.IDENT);
             }
             // "LET" ident = expression
@@ -177,7 +179,8 @@ namespace Compiler
                 if (!symbols.Contains(_currentToken.TokenText))
                 {
                     Array.Resize(ref symbols, symbols.Length + 1);
-                    symbols.Append(_currentToken.TokenText);
+                    //symbols.Append(_currentToken.TokenText);
+                    symbols[symbols.Length - 1] = _currentToken.TokenText;
                 }
 
                 Match(TokenType.IDENT);
@@ -194,7 +197,8 @@ namespace Compiler
                 if (!symbols.Contains(_currentToken.TokenText))
                 {
                     Array.Resize(ref symbols, symbols.Length + 1);
-                    symbols.Append(_currentToken.TokenText);
+                    //symbols.Append(_currentToken.TokenText);
+                    symbols[symbols.Length-1] = _currentToken.TokenText;
                 }
 
                 Match(TokenType.IDENT);
