@@ -4,4 +4,7 @@ Compiler from a tutorial in python that i am trying to recreate in C#
 The tutorial by Austin Z. Henley: https://austinhenley.com/blog/teenytinycompiler1.html  
 His Github repository: https://github.com/AZHenley/teenytinycompiler  
 
-I am almost done with the lexer and tokenizer
+This is now a complete version made i C#
+If you want you can always do a pull request to contribute code or adjust the code for readability.
+
+I am not planning on adding stuff to this, i mostly did this to see how hard/easy it is to convert code from a different language.
