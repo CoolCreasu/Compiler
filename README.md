@@ -10,7 +10,7 @@ the second input is the path where you want the code output. (e.g. "C:/code/outp
 
 ## Want to contibrute?
 
-Read the CONTRIBUTION.md file
+Read the CONTRIBUTING.md file
 
 ## Credits
 
