@@ -2,14 +2,11 @@
 {
     internal class Program
     {
-        //private static string _code = "PRINT \"hello\"\n";
-        //private static Lexer _lexer;
-        //private static Emitter _emitter;
-        //private static Parser _parser;
-
-
         static void Main(string[] args)
         {
+            Console.WriteLine("Teeny Tiny Compiler 1.0");
+            Console.WriteLine("This is a C# version of a compiler from a python tutorial made by Austin Z. Henley");
+            Console.WriteLine("The website to the tutorial: https://austinhenley.com/blog/teenytinycompiler1.html");
             Console.WriteLine("Please put in the path to your code. (e.g. C:/code/hello.teeny)");
             var path = Console.ReadLine();
             Console.WriteLine("Please put in the path to your output. (e.g. C:/code/output.c)");
