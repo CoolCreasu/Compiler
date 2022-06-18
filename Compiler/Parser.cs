@@ -10,6 +10,7 @@ namespace Compiler
     internal class Parser
     {
         Lexer _lexer;
+        Emitter _emitter;
         Token _currentToken;
         Token _peekToken;
 
@@ -17,9 +18,10 @@ namespace Compiler
         string[] labelsDeclared = { string.Empty }; // Labels declared so far.
         string[] labelsGotoed = { string.Empty };  // Labels goto'ed so far.
 
-        public Parser(Lexer lexer)
+        public Parser(Lexer lexer, Emitter emitter)
         {
             _lexer = lexer;
+            _emitter = emitter;
 
             //_currentToken = null;
             //_peekToken = null;
@@ -64,7 +66,8 @@ namespace Compiler
         /// </summary>
         public void Program()
         {
-            Console.WriteLine("PROGRAM");
+            _emitter.HeaderLine("#include <stdio.h>");
+            _emitter.HeaderLine("int main(void){");
 
             // Since some newlines are required in our grammar, need to skip the excess.
             while (CheckToken(TokenType.NEWLINE))
@@ -78,6 +81,11 @@ namespace Compiler
                 Statement();
             }
 
+            // Wrap things up.
+            _emitter.EmitLine("return 0;");
+            _emitter.EmitLine("}");
+
+            // Check that each label referenced in GOTO is declared.
             foreach (string label in labelsGotoed)
             {
                 if (!labelsDeclared.Contains(label))
@@ -95,29 +103,32 @@ namespace Compiler
             // "PRINT" (expression | string)
             if (CheckToken(TokenType.PRINT))
             {
-                Console.WriteLine("STATEMENT-PRINT");
                 NextToken();
 
                 if (CheckToken(TokenType.STRING))
                 {
-                    // Simple string.
+                    // Simple string so print it.
+                    _emitter.EmitLine("printf(\"" + _currentToken.TokenText + "\\n\");");
                     NextToken();
                 }
                 else
                 {
-                    // Expression
+                    // Expect an expression and print the result as a float.
+                    _emitter.Emit("printf(\"%" + ".2f\\n\", (float)(");
                     Expression();
+                    _emitter.EmitLine("));");
                 }
             }
             // "IF" comparison "THEN" {statement} "ENDIF"
             else if (CheckToken(TokenType.IF))
             {
-                Console.WriteLine("STATEMENT-IF");
                 NextToken();
+                _emitter.Emit("if(");
                 Comparison();
 
                 Match(TokenType.THEN);
                 NL();
+                _emitter.Emit("){");
 
                 // Zero or more statements in the body
                 while (!CheckToken(TokenType.ENDIF))
@@ -126,27 +137,31 @@ namespace Compiler
                 }
 
                 Match(TokenType.ENDIF);
+                _emitter.Emit("}");
             }
             // "WHILE" comparison "REPEAT" nl {statement nl} "ENDWHILE" nl
             else if (CheckToken(TokenType.WHILE))
             {
-                Console.WriteLine("STATEMENT-WHILE");
                 NextToken();
+                _emitter.Emit("while(");
                 Comparison();
 
                 Match(TokenType.REPEAT);
                 NL();
+                _emitter.EmitLine("){");
 
                 // Zero or more statements in the loop body.
                 while (!CheckToken(TokenType.ENDWHILE))
+                {
                     Statement();
+                }
 
                 Match(TokenType.ENDWHILE);
+                _emitter.Emit("}");
             }
             // "LABEL" ident
             else if (CheckToken(TokenType.LABEL))
             {
-                Console.WriteLine("STATEMENT-LABEL");
                 NextToken();
 
                 // Make sure the label doesn't already exist
@@ -157,22 +172,23 @@ namespace Compiler
                 Array.Resize(ref labelsDeclared, labelsDeclared.Length + 1);
                 //labelsDeclared.Append(_currentToken.TokenText);
                 labelsDeclared[labelsDeclared.Length - 1] = _currentToken.TokenText;
+
+                _emitter.EmitLine(_currentToken.TokenText + ":");
                 Match(TokenType.IDENT);
             }
             // "GOTO" ident
             else if (CheckToken(TokenType.GOTO))
             {
-                Console.WriteLine("STATEMENT-GOTO");
                 NextToken();
                 Array.Resize(ref labelsGotoed, labelsGotoed.Length + 1);
                 //labelsGotoed.Append(_currentToken.TokenText);
                 labelsGotoed[labelsGotoed.Length - 1] = _currentToken.TokenText;
+                _emitter.EmitLine("goto " + _currentToken.TokenText + ";");
                 Match(TokenType.IDENT);
             }
             // "LET" ident = expression
             else if (CheckToken(TokenType.LET))
             {
-                Console.WriteLine("STATEMENT-LET");
                 NextToken();
 
                 // Check if ident exists in symbol table. If not, declare it.
@@ -181,12 +197,15 @@ namespace Compiler
                     Array.Resize(ref symbols, symbols.Length + 1);
                     //symbols.Append(_currentToken.TokenText);
                     symbols[symbols.Length - 1] = _currentToken.TokenText;
+                    _emitter.HeaderLine("float " + _currentToken.TokenText + ";");
                 }
 
+                _emitter.Emit(_currentToken.TokenText + " = ");
                 Match(TokenType.IDENT);
                 Match(TokenType.EQ);
 
                 Expression();
+                _emitter.EmitLine(";");
             }
             // "INPUT" ident
             else if (CheckToken(TokenType.INPUT))
@@ -199,7 +218,16 @@ namespace Compiler
                     Array.Resize(ref symbols, symbols.Length + 1);
                     //symbols.Append(_currentToken.TokenText);
                     symbols[symbols.Length-1] = _currentToken.TokenText;
+
+                    _emitter.HeaderLine("float " + _currentToken.TokenText + ";");
                 }
+
+                // Emit scanf but also validate the input. If invalid, set the variable to 0 and clear the input.
+                _emitter.EmitLine("if(0 == scanf(\"%" + "f\", &" + _currentToken.TokenText + ")) {");
+                _emitter.EmitLine(_currentToken.TokenText + " = 0;");
+                _emitter.Emit("scanf(\"%");
+                _emitter.EmitLine("*s\");");
+                _emitter.EmitLine("}");
 
                 Match(TokenType.IDENT);
             }
@@ -214,8 +242,6 @@ namespace Compiler
 
         public void NL()
         {
-            Console.WriteLine("NEWLINE");
-
             // Require at least one newline.
             Match(TokenType.NEWLINE);
             // But we will allow extra newlines too, of course.
@@ -228,12 +254,11 @@ namespace Compiler
         /// </summary>
         public void Comparison()
         {
-            Console.WriteLine("COMPARISON");
-
             Expression();
             // Must be at least one comparison operator and another expression.
             if (IsComparisonOperator())
             {
+                _emitter.Emit(_currentToken.TokenText);
                 NextToken();
                 Expression();
             }
@@ -244,6 +269,7 @@ namespace Compiler
             // Can have 0 or more comparison operator and expressions
             while (IsComparisonOperator())
             {
+                _emitter.Emit(_currentToken.TokenText);
                 NextToken();
                 Expression();
             }
@@ -264,12 +290,11 @@ namespace Compiler
         /// </summary>
         public void Expression()
         {
-            Console.WriteLine("Expression");
-
             Term();
             // Can have 0 or more +/- and expressions.
             while (CheckToken(TokenType.PLUS) || CheckToken(TokenType.MINUS))
             {
+                _emitter.Emit(_currentToken.TokenText);
                 NextToken();
                 Term();
             }
@@ -280,12 +305,11 @@ namespace Compiler
         /// </summary>
         public void Term()
         {
-            Console.WriteLine("TERM");
-
             Unary();
             // Can have 0 or more *// and expressions.
             while (CheckToken(TokenType.ASTERISK) || CheckToken(TokenType.SLASH))
             {
+                _emitter.Emit(_currentToken.TokenText);
                 NextToken();
                 Unary();
             }
@@ -295,11 +319,10 @@ namespace Compiler
         /// </summary>
         public void Unary()
         {
-            Console.WriteLine("UNARY");
-
             // Optional unary +/-
             if (CheckToken(TokenType.PLUS) || CheckToken(TokenType.MINUS))
             {
+                _emitter.Emit(_currentToken.TokenText);
                 NextToken();
             }
             Primary();
@@ -310,10 +333,9 @@ namespace Compiler
         /// </summary>
         public void Primary()
         {
-            Console.WriteLine("PRIMARY (" + _currentToken.TokenText + ")");
-
             if (CheckToken(TokenType.NUMBER))
             {
+                _emitter.Emit(_currentToken.TokenText);
                 NextToken();
             }
             else if (CheckToken(TokenType.IDENT))
@@ -323,6 +345,7 @@ namespace Compiler
                 {
                     Abort("Referencing variable before assignment: " + _currentToken.TokenText);
                 }
+                _emitter.Emit(_currentToken.TokenText);
                 NextToken();
             }
             else
